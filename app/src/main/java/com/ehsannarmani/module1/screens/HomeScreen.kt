@@ -3,6 +3,7 @@ package com.ehsannarmani.module1.screens
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -43,6 +44,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -57,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ehsannarmani.module1.view_model.HomeViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.ehsannarmani.module1.LocalAppState
 import com.ehsannarmani.module1.Navigation
 import com.ehsannarmani.module1.database.AppDatabase
@@ -115,14 +119,25 @@ fun HistoryItem(checkpoints: List<UiCheckpoint>) {
     val drawableAreaWidth = remember {
         mutableFloatStateOf(0f)
     }
+    val pathMeasure = remember {
+        PathMeasure()
+    }
     val checkpointX = (drawableAreaWidth.floatValue /
             (checkpoints.count())).toInt() + 10
 
 
     LaunchedEffect(Unit) {
-        checkpoints.forEachIndexed { index, uiCheckpoint ->
-            delay((index*100).toLong())
-            uiCheckpoint.imageScale.animateTo(1f, animationSpec = tween(300))
+        launch {
+            checkpoints.forEachIndexed { index, uiCheckpoint ->
+                delay((index * 100).toLong())
+                uiCheckpoint.imageScale.animateTo(1f, animationSpec = tween(300))
+            }
+        }
+        launch {
+            checkpoints.forEachIndexed { index, uiCheckpoint ->
+                delay((index * 50).toLong())
+                uiCheckpoint.lineProgress.animateTo(1f, animationSpec = tween(300, easing = LinearEasing))
+            }
         }
     }
 
@@ -142,25 +157,57 @@ fun HistoryItem(checkpoints: List<UiCheckpoint>) {
                         .fillMaxSize()
                         .padding(top = 64.dp)
                 ) {
-                    checkpoints.forEachIndexed { index, checkpoint ->
 
+                    checkpoints.forEachIndexed { index, checkpoint ->
                         if (index + 1 <= checkpoints.lastIndex) {
                             val previousCheckpoint = checkpoints.getOrNull(index - 1)
                             val nextCheckpoint = checkpoints.getOrNull(index + 1)
 
-                            val lineY = getYForCheckpoints(previousCheckpoint, checkpoint, 50).toFloat()
+                            val lineY =
+                                getYForCheckpoints(previousCheckpoint, checkpoint, 50).toFloat()
                             val lineX = (index * checkpointX).toFloat()
 
-                            val endLineY = getYForCheckpoints(checkpoint, nextCheckpoint!!, 50).toFloat()
+                            val endLineY =
+                                getYForCheckpoints(checkpoint, nextCheckpoint!!, 50).toFloat()
                             val endLineX = ((index + 1) * checkpointX).toFloat()
-                            drawLine(
-                                color = Color.Black,
-                                start = Offset(lineX, lineY),
-                                end = Offset(endLineX, endLineY),
-                                strokeWidth = 5f
+
+                            val path = Path().apply {
+                                moveTo(lineX,lineY)
+                                lineTo(endLineX, endLineY)
+                            }
+
+
+                            val segment = Path()
+
+                            val pathMeasure = PathMeasure()
+                            pathMeasure.setPath(path,false)
+                            pathMeasure.getSegment(
+                                0f,
+                                pathMeasure.length*checkpoint.lineProgress.value,
+                                segment
                             )
+
+                            drawPath(
+                                path = segment,
+                                color = Color.Black,
+                                style = Stroke(5f)
+                            )
+
+
                         }
+
+
+
                     }
+//                    val segment = Path()
+//
+//                    pathMeasure.setPath(path, false)
+//                    pathMeasure.getSegment(
+//                        0f,
+//                        pathMeasure.length,
+//                        segment,
+//                    )
+
                 }
                 Box(modifier = Modifier
                     .fillMaxSize()
@@ -178,8 +225,7 @@ fun HistoryItem(checkpoints: List<UiCheckpoint>) {
                                 .scale(checkpoint.imageScale.value)
                                 .clip(CircleShape)
                                 .background(Color.White)
-                                .border(1.dp, Color.Black, CircleShape)
-                                ,
+                                .border(1.dp, Color.Black, CircleShape),
                                 contentAlignment = Alignment.Center) {
                                 Text(text = "S")
                             }
@@ -191,35 +237,24 @@ fun HistoryItem(checkpoints: List<UiCheckpoint>) {
                                 .scale(checkpoint.imageScale.value)
                                 .clip(CircleShape)
                                 .background(Color.White)
-                                .border(1.dp, Color.Black, CircleShape)
-                                ,
+                                .border(1.dp, Color.Black, CircleShape),
                                 contentAlignment = Alignment.Center) {
                                 Text(text = "E")
                             }
                         }
                         checkpoint.image?.let {
-                            appState.context.contentResolver.openInputStream(Uri.parse(it)).use {
-                                it?.let {
-                                    val bytes = it.readBytes()
-                                    Image(
-                                        modifier = Modifier
-                                            .size(30.dp)
-                                            .offset { IntOffset(checkpointX * index, pointY) }
-                                            .rotate(90f)
-                                            .scale(checkpoint.imageScale.value)
-                                            .clip(CircleShape)
-                                        ,
-                                        bitmap = BitmapFactory
-                                            .decodeByteArray(bytes, 0, bytes.size)
-                                            .asImageBitmap(),
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop
+                            AsyncImage(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .offset { IntOffset(checkpointX * index, pointY) }
+                                    .rotate(90f)
+                                    .scale(checkpoint.imageScale.value)
+                                    .clip(CircleShape),
+                                model = it,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
 
-                                    )
-                                }
-                                it?.close()
-                            }
-
+                            )
                         }
                     }
                 }

@@ -61,5 +61,6 @@ data class UiCheckpoint(
     val temperature:Double,
     val timeElapsed:Int,
     val steps:Int,
-    val imageScale:Animatable<Float,AnimationVector1D> = Animatable(0f)
+    val imageScale:Animatable<Float,AnimationVector1D> = Animatable(0f),
+    val lineProgress:Animatable<Float,AnimationVector1D> = Animatable(0f)
 )

@@ -11,12 +11,18 @@ import android.location.LocationRequest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathMeasure
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,6 +50,31 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val appState = LocalAppState.current
 
+
+//                    val pathMeasure = PathMeasure()
+//                    val path = Path().apply {
+//                        moveTo(50f,100f)
+//                        lineTo(400f,100f)
+//                    }
+//                    val segment = Path()
+//                    pathMeasure.apply {
+//                        setPath(path,false)
+//                    }
+//                    val halfLength = pathMeasure.length/2
+//                    pathMeasure.getSegment(
+//                        0f,
+//                        halfLength,
+//                        segment,
+//                    )
+//
+//                    Canvas(modifier=Modifier.fillMaxSize()){
+//                        drawPath(
+//                            path = segment,
+//                            color = Color.Black,
+//                            style = Stroke(5f)
+//                        )
+//                    }
+//                    return@Surface
                     NavHost(
                         navController = appState.navController,
                         startDestination = Navigation.Home.route

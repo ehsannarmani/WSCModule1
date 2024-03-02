@@ -91,7 +91,7 @@ fun Camera() {
     }
     val imageCapture = remember {
         ImageCapture.Builder()
-            .setJpegQuality(50)
+                .setJpegQuality(10)
             .build()
     }
     val outputFile = remember {
