@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toFile
@@ -97,7 +98,7 @@ fun CheckpointScreen(
             with(RecordViewModel.lastRecordData) {
                 Text(text = "Speed: ${speed.to2Decimal()} m/s")
                 Text(text = "Temperature: ${temperature} C")
-                Text(text = "Location: ${lat.to5Decimal()}, ${lng.to5Decimal()}, ${alt.to5Decimal()}")
+                Text(text = "Location: ${lat.to5Decimal()}, ${lng.to5Decimal()}, ${alt.to5Decimal()}", textAlign = TextAlign.Center)
                 Text(text = "Steps: $steps")
             }
         }

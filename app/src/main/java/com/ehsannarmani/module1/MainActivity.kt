@@ -55,12 +55,13 @@ class MainActivity : ComponentActivity() {
 //                    val path = Path().apply {
 //                        moveTo(50f,100f)
 //                        lineTo(400f,100f)
+//                        lineTo(500f,200f)
 //                    }
 //                    val segment = Path()
 //                    pathMeasure.apply {
 //                        setPath(path,false)
 //                    }
-//                    val halfLength = pathMeasure.length/2
+//                    val halfLength = pathMeasure.length*.8f
 //                    pathMeasure.getSegment(
 //                        0f,
 //                        halfLength,

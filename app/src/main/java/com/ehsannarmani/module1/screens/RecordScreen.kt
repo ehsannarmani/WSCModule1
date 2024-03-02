@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -251,7 +252,7 @@ fun RecordScreen(
             Column {
                 Text(text = "Speed: ${data.speed.to2Decimal()} m/s")
                 Text(text = "Temperature: ${data.temperature} C")
-                Text(text = "Location: ${data.lat.to5Decimal()}, ${data.lng.to5Decimal()}, ${data.alt.to5Decimal()}")
+                Text(text = "Location: ${data.lat.to5Decimal()}, ${data.lng.to5Decimal()}, ${data.alt.to5Decimal()}", textAlign = TextAlign.Center)
                 Text(text = "Steps: ${data.steps}")
             }
         }

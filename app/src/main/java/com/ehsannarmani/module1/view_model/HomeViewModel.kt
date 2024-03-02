@@ -1,10 +1,13 @@
 package com.ehsannarmani.module1.view_model
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ehsannarmani.module1.database.AppDatabase
 import com.ehsannarmani.module1.database.CheckpointEntity
 import com.ehsannarmani.module1.database.UiCheckpoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +23,18 @@ class HomeViewModel:ViewModel() {
 
     init {
         getHistories()
+    }
+
+    fun resetCheckpointAnimations(scope:CoroutineScope){
+        scope.launch {
+            _histories.update {
+                it.map { it.map {
+                    val instance = it
+                    it.imageScale.animateTo(0f, animationSpec = tween(0))
+                    instance
+                } }
+            }
+        }
     }
 
     fun getHistories(){
